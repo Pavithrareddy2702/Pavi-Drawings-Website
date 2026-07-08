@@ -18,7 +18,9 @@ exports.loginPage = (req, res) => {
 };
 
 exports.RegisterPage = (req, res) => {
-    res.render('./pages/registrationPage');
+    res.render('./pages/registrationPage', {
+        message: null
+    });
 };
 
 exports.addPainter = (req, res) => {
@@ -75,12 +77,30 @@ exports.trendingArtists = async(req,res)=>{
 };
 
 exports.register = async (req, res) => {
+    try {
+        const { email } = req.body;
+
+        const existingUser = await UserModel.findOne({ email });
+
+        if (existingUser) {
+            return res.render('./pages/registrationPage', {
+                message: "You have already registered. Please login."
+            });
+        }
+
         const newUser = new UserModel(req.body);
         await newUser.save();
-        res.redirect('/');
-        console.log("Registration successfull");
-};
 
+        console.log("Registration successful");
+        res.redirect('/');
+
+    } catch (err) {
+        console.error(err);
+        res.render('./pages/registrationPage', {
+            message: "Something went wrong. Please try again."
+        });
+    }
+};
 exports.details = async(req,res)=>{
     console.log(req.body);
     const _id = req.body;
