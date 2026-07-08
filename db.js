@@ -1,23 +1,15 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
+require("dotenv").config();
 
-// const connection = mongoose.createConnection("mongodb://localhost:27017/Pavi_Painting_Website").on("open", ()=>{
-//   console.log("Database Connected");
-// });
-const connectionString = "mongodb://127.0.0.1:27017/Pavi_Painting_Website";
-
-const connection = mongoose.createConnection(connectionString, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
+const connection = mongoose.createConnection(process.env.MONGO_URI)
+.on("connected", () => {
+    console.log("✅ Database Connected Successfully");
 })
-.on('connected', () => {
-  console.log("✅ Database Connected Successfully");
+.on("error", (err) => {
+    console.error("❌ Database Connection Error:", err.message);
 })
-.on('error', (err) => {
-  console.error("❌ Database Connection Error:", err.message);
-})
-.on('disconnected', () => {
-  console.warn("⚠️ Database Disconnected");
+.on("disconnected", () => {
+    console.log("⚠️ Database Disconnected");
 });
 
-
-module.exports = connection 
+module.exports = connection;
